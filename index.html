@@ -3,8 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <title>Marvel Invaders</title>
+
+    <!-- Importando a fonte  -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
+
+    <!-- Importando arquivo CSS -->
+    <link type="text/css" href="css/style.css">
+
+    <style>
+        body, html {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        #starry-sky {
+            width:100%;
+            height:100%;
+            z-index: -1;
+            position: absolute;
+            left: 0px;
+            top: 0px;
+        }
+    </style>
 </head>
 <body>
-
+    <div id="starry-sky"></div>
+    <script src="js/starrysky.js"></script>
+    <script>
+        // Inicializa o fundo de estrelas
+        const container = document.getElementById("starry-sky");
+        const starrySky = new Starrysky();
+        starrySky.initialise(container);
+        starrySky.start();
+    </script>
 </body>
 </html>
