@@ -8,36 +8,24 @@
     <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
 
     <!-- Importando arquivo CSS -->
-    <link type="text/css" href="css/style.css">
-
-    <style>
-        body, html {
-            width: 100%;
-            height: 100%;
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-        }
-
-        #starry-sky {
-            width:100%;
-            height:100%;
-            z-index: -1;
-            position: absolute;
-            left: 0px;
-            top: 0px;
-        }
-    </style>
+    <link type="text/css" href="css/style.css" rel="stylesheet">
 </head>
 <body>
     <div id="starry-sky"></div>
+    <div id="pagina-inicial">
+        <div class="title">
+            <h3>Escolha o seu</h3>
+            <h1>Herói</h1>
+        </div>
+        <div class="start-game-buttom">
+            <button>Começar jogo</button>
+        </div>
+        <div class="scroll" id="charactersContainer"></div>
+        <div class="next-page-buttom">
+            <button id="next-buttom">Carregar mais</button>
+        </div>
+    </div>
     <script src="js/starrysky.js"></script>
-    <script>
-        // Inicializa o fundo de estrelas
-        const container = document.getElementById("starry-sky");
-        const starrySky = new Starrysky();
-        starrySky.initialise(container);
-        starrySky.start();
-    </script>
+    <script src="js/marvel.js"></script>
 </body>
 </html>

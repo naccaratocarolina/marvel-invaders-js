@@ -1,4 +1,5 @@
 function Starrysky() {
+    // Atributos e valores default
     this.framesPerSecond = 30;
     this.canvas = null;
     this.width = 0;
@@ -9,21 +10,14 @@ function Starrysky() {
     this.intervalId = 0;
 }
 
-function Star(x, y, size, speed) {
-    this.x = x;
-    this.y = y;
-    this.size = size;
-    this.speed = speed;
-}
-
-//	The main function - initialises the starfield.
+// Funcao principal que inicializa o fundo de estrelas
 Starrysky.prototype.initialise = function(div) {
     const self = this;
 
     // Armazena a largura e altura da div fornecida
     this.div = div;
-    this.width = window.innerWidth;
-    this.height = window.innerHeight;
+    self.width = window.innerWidth;
+    self.height = window.innerHeight;
 
     // Para fazer com que as estrelas caiam de cima para baixo
     window.onresize = function(event) {
@@ -31,7 +25,7 @@ Starrysky.prototype.initialise = function(div) {
         self.height = window.innerHeight;
         self.canvas.width = self.width;
         self.canvas.height = self.height;
-        this.draw();
+        self.draw();
     }
 
     // Cria o canvas
@@ -100,3 +94,15 @@ Starrysky.prototype.draw = function() {
         canvasContext.fillRect(star.x, star.y, star.size, star.size);
     }
 };
+
+function Star(x, y, size, speed) {
+    this.x = x;
+    this.y = y;
+    this.size = size;
+    this.speed = speed;
+}
+
+const container = document.getElementById("starry-sky");
+const starrySky = new Starrysky();
+starrySky.initialise(container);
+starrySky.start();
