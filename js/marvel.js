@@ -27,15 +27,20 @@ function getCharacters(offset = 0) {
     fetch(API_URI + "characters?limit=20&orderBy=name&offset=" + offset + timestamp + API_PUB_KEY + hash)
         .then(response => response.json())
         .then(response => {
-            console.log(response)
             response.data.results.map(character => {
+                // So adiciona personagens que possuem uma imagem
                 if(character.thumbnail.path.split("/")[10] !== "image_not_available") {
+                    console.log(character);
+
+                    // Criando o card de cada personagem
                     const card = document.createElement("div");
                     card.setAttribute("class", "card");
 
+                    // Cria uma tag img com a imagem desse personagem
                     const image = document.createElement("img");
                     image.src = character.thumbnail.path + "/portrait_medium." + character.thumbnail.extension;
 
+                    // Cria uma tag h2 com o nome desse personagem
                     const name = document.createElement("h2");
                     name.textContent = character.name;
 
