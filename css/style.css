@@ -137,3 +137,25 @@ button {
     width: 100%;
     height: 100%;
 }
+
+#details {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+#details h2 {
+    color: #FBFAF5;
+    margin-left: 7vw;
+    font-size: 2.5em;
+}
+
+#details img {
+    position: relative;
+    margin: 1em;
+    left: 5vw;
+    height: 5.5vh;
+    width: 10%;
+    object-fit:cover;
+    border-radius: 50%;
+}

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Marvel Invaders</title>
+
+    <!-- Importando a fonte  -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
+
+    <!-- Importando arquivo CSS -->
+    <link type="text/css" href="css/style.css" rel="stylesheet">
+</head>
+<body>
+    <div id="starry-sky"></div>
+    <div id="gameContainer">
+        <canvas id="gameCanvas"></canvas>
+    </div>
+    <div id="details">
+        <img id="player-image">
+    </div>
+    <script src="js/starrysky.js"></script>
+    <script src="js/marvelInvaders.js"></script>
+    <script>
+        // Salva as informacoes do canvas
+        var canvas = document.getElementById("gameCanvas");
+        canvas.width = 850;
+        canvas.height = 1450;
+
+        // Cria uma variavel game, que é instancia do jogo
+        const game = new MarvelInvaders();
+
+        // Inicia o jogo e cria o tabuleiro
+        game.initialise(canvas);
+        game.createShip();
+
+        window.onkeydown = function (e) {
+            var keyCode = e.keyCode;
+            e.preventDefault();
+            game.pressedKey(keyCode);
+        };
+
+        window.onkeyup = function (e) {
+            var keyCode = e.keyCode;
+            e.preventDefault();
+            game.unpressedKey(keyCode);
+        }
+
+        game.start();
+    </script>
+</body>
+</html>

@@ -2,6 +2,7 @@
 const KEY_LEFT = 37;
 const KEY_RIGHT = 39;
 const KEY_SPACE = 32;
+const KEY_ENTER = 13;
 
 function MarvelInvaders() {
     // Atributos e valores default
@@ -24,11 +25,18 @@ function MarvelInvaders() {
     this.state = [];
 
     // Input/Output (eventos do teclado)
-    this.keys = {};
+    this.keys = {
+        left: false,
+        right: false,
+        space: false
+    };
     this.gameCanvas = null;
 
     // Posicao anterior do x
-    this.previousX = 0;
+    this.direction = 0;
+
+    this.ship = null;
+    this.fire = null;
 
     // Configuracoes iniciais do jogo
     this.settings = {
@@ -75,13 +83,89 @@ MarvelInvaders.prototype.initialise = function (gameCanvas) {
         right: gameCanvas.width,
         bottom: gameCanvas.height
     }
+
+    // Salva as informacoes do jogador e mostra na tela
+    const playerImage = document.getElementById("player-image");
+    playerImage.src = localStorage.getItem("playerImage");
+
+    const playerName = document.createElement("h2");
+    playerName.textContent = localStorage.getItem("playerName");
+
+    details.appendChild(playerImage);
+    details.appendChild(playerName);
+    console.log(playerImage);
+
+    // Cria a nave
+    this.ship = new Ship(350, 1300, localStorage.getItem("playerImage"));
 };
+
+MarvelInvaders.prototype.start = function () {
+    // Cria movimento
+    const self = this;
+    setInterval(function () {
+        self.update();
+        self.createShip();
+    }, 1000/this.settings.framesPerSecond);
+}
+
+MarvelInvaders.prototype.update = function () {
+    const self = this;
+
+    if (this.keys.right) {
+        if (this.ship.x <= 750) {
+            this.ship.x += 10;
+        }
+    }
+    if (this.keys.left) {
+        if (this.ship.x >= 0) {
+            this.ship.x -= 10;
+        }
+    }
+    if (this.keys.space) {
+        self.shipFire(y - 10)
+    }
+}
+
+MarvelInvaders.prototype.createShip = function () {
+    const gameContext = this.gameCanvas.getContext("2d");
+    const img = new Image();
+    var x = this.ship.x;
+    var y = this.ship.y;
+    img.onload = function () {
+        gameContext.drawImage(img, x, y);
+    };
+    img.src = this.ship.character;
+}
+
+MarvelInvaders.prototype.pressedKey = function (keyCode) {
+    if (keyCode === KEY_RIGHT) {
+        this.keys.right = true;
+    }
+    else if (keyCode === KEY_LEFT) {
+        this.keys.left = true;
+    }
+    else if (keyCode === KEY_SPACE || keyCode === KEY_ENTER) {
+        this.keys.space = true;
+    }
+}
+
+MarvelInvaders.prototype.unpressedKey = function (keyCode) {
+    if (keyCode === KEY_RIGHT) {
+        this.keys.right = false;
+    }
+    else if (keyCode === KEY_LEFT) {
+        this.keys.left = false;
+    }
+    else if (keyCode === KEY_SPACE || keyCode === KEY_ENTER) {
+        this.keys.space = false;
+    }
+}
 
 /**
  * Ship.
  *
  * É a nave do usuario que está jogando.
- * Ela possui uma posicao e o id do personagem escolhido.
+ * Ela possui uma posicao e a string com a src da imagem do player.
  *
  * @param x
  * @param y
@@ -104,9 +188,10 @@ function Ship(x, y, character) {
  * @param speed
  * @constructor
  */
-function Fire(x, y, speed) {
+function Fire(x, y, size, speed) {
     this.x = x;
     this.y = y;
+    this.size = size;
     this.speed = speed;
 }
 

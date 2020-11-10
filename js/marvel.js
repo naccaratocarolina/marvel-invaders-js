@@ -16,6 +16,11 @@ document.getElementById("next-buttom").onclick = function (e) {
     getCharacters(page);
 }
 
+// Redireciona para o jogo e salva informacoes importantes no local storage
+document.getElementById("redirect-game").onclick = function () {
+    location.href = "game.html";
+};
+
 /**
  * Funcao que lista os personagens do universo Marvel.
  * Faz uma paginacao de no máximo 20 personagens por vez.
@@ -30,7 +35,7 @@ function getCharacters(offset = 0) {
             response.data.results.map(character => {
                 // So adiciona personagens que possuem uma imagem
                 if(character.thumbnail.path.split("/")[10] !== "image_not_available") {
-                    console.log(character);
+                    //console.log(character);
 
                     // Criando o card de cada personagem
                     const card = document.createElement("div");
@@ -39,6 +44,7 @@ function getCharacters(offset = 0) {
                     // Cria uma tag img com a imagem desse personagem
                     const image = document.createElement("img");
                     image.src = character.thumbnail.path + "/portrait_medium." + character.thumbnail.extension;
+                    image.alt = "Foto de um herói da Marvel";
 
                     // Cria uma tag h2 com o nome desse personagem
                     const name = document.createElement("h2");
@@ -47,6 +53,13 @@ function getCharacters(offset = 0) {
                     charactersContainer.appendChild(card);
                     card.appendChild(image);
                     card.appendChild(name);
+
+                    // Salva o nome do personagem clicado
+                    card.onclick = function () {
+                        console.log(character.name)
+                        localStorage.setItem("playerName", character.name);
+                        getCharacterImageByName(character.name);
+                    }
                 }
             });
         });
@@ -63,10 +76,10 @@ function getCharacterImageByName(characterName) {
         .then(response => {
             const image = document.createElement('img');
             image.src = response.data.results[0].thumbnail.path + "/portrait_medium." + response.data.results[0].thumbnail.extension;
-            console.log(image);
+            // Salva a imagem do personagem escolhido no local storage
+            localStorage.setItem("playerImage", image.src);
         });
 }
 
-//getCharacterImageByName("Black Widow");
 // Chama a funcao de listagem de personagems assim que a página carrega
 charactersContainer.onload = getCharacters();
