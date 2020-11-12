@@ -142,18 +142,28 @@ button {
     display: flex;
     flex-direction: row;
     align-items: center;
+    justify-content: space-between;
+}
+
+#details h1 {
+    display: flex;
+    font-size: 3.2em;
+    width: 20vw;
+    justify-content: center;
+    color: #EF0000;
+    text-shadow: 0.06em 0.06em 0 #F0A90A;
 }
 
 #details h2 {
     color: #FBFAF5;
-    margin-left: 7vw;
-    font-size: 2.5em;
+    font-size: 2em;
+    width: 30vw;
+    align-items: center;
 }
 
 #details img {
     position: relative;
-    margin: 1em;
-    left: 5vw;
+    margin: 0.8em;
     height: 5.5vh;
     width: 10%;
     object-fit:cover;

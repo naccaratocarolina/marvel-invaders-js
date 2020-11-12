@@ -54,31 +54,48 @@ function getCharacters(offset = 0) {
                     card.appendChild(image);
                     card.appendChild(name);
 
-                    // Salva o nome do personagem clicado
+                    // Salva o nome do personagem clicado e gera um invader
                     card.onclick = function () {
-                        console.log(character.name)
+                        // Salva o player escolhido
+                        console.log("Player: " + character.name)
                         localStorage.setItem("playerName", character.name);
-                        getCharacterImageByName(character.name);
+                        getCharacterImageByName("playerImage", character.name);
+
+                        // Gera um inimigo aleatório
+                        getRandomCharacter();
                     }
                 }
             });
         });
 }
 
+
 /**
  * Funcao que retorna a imagem do personagem, dado o seu nome.
  *
+ * @param itemNameOnStorage
  * @param characterName
  */
-function getCharacterImageByName(characterName) {
+function getCharacterImageByName(itemNameOnStorage, characterName) {
     fetch(API_URI + "characters?name=" + characterName + timestamp + API_PUB_KEY + hash)
         .then(response => response.json())
         .then(response => {
             const image = document.createElement('img');
             image.src = response.data.results[0].thumbnail.path + "/portrait_medium." + response.data.results[0].thumbnail.extension;
             // Salva a imagem do personagem escolhido no local storage
-            localStorage.setItem("playerImage", image.src);
+            localStorage.setItem(itemNameOnStorage, image.src);
         });
+}
+
+function getRandomCharacter() {
+    const offset = Math.floor(Math.random() * 99 + 1);
+    fetch(API_URI + "characters?limit=1&orderBy=name&offset=" + offset + timestamp + API_PUB_KEY + hash)
+        .then(response => response.json())
+        .then(response => {
+           console.log("Invader: " + response.data.results[0].name);
+           localStorage.setItem("invaderName", response.data.results[0].name);
+           getCharacterImageByName("invaderImage", response.data.results[0].name);
+    });
 }
 
 // Chama a funcao de listagem de personagems assim que a página carrega

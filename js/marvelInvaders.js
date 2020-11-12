@@ -6,8 +6,6 @@ const KEY_ENTER = 13;
 
 function MarvelInvaders() {
     // Atributos e valores default
-    this.playerImage = "";
-
     this.width = 0;
     this.height = 0;
     this.gameDimentions = {
@@ -35,37 +33,43 @@ function MarvelInvaders() {
     // Entidades do jogo
     this.ship = null;
     this.fires = [];
+    this.invaders = [];
+    this.bombs = [];
 
     // Game states
     this.lastFireTime = null;
+    this.lastBombTime = null;
     this.dt = 0; // delta t para criar movimento para os objetos
 
     // Configuracoes iniciais do jogo
     this.settings = {
         // General
-        framesPerSecond: 50,
+        framesPerSecond: 10,
         levelDificultyIncrease: 0.2,
         levelIncrease: 25,
 
         // Ship
-        shipSpeed: 150,
+        shipSpeed: 100,
         pointsPerInvader: 5,
 
         // Fire (ship)
-        fireSpeed: 150,
+        fireSpeed: 120,
         fireMaxFrequency: 2,
 
         // Invader
-        invaderInitialSpeed: 25,
-        invaderAceleration: 0,
+        initialSpeed: 25,
+        invaderSpeed: {
+            x: 25,
+            y: 0
+        },
+        invaderAceleration: 10,
         invaderBombRange: 20,
         invaderRows: 5,
-        invaderColums: 10,
+        invaderColums: 3,
 
         // Bomb (invaders)
-        bombFrequency: 0.05,
-        bombMinSpeed: 50,
-        bombMaxSpeed: 50
+        bombFrequency: 0.5,
+        bombSpeed: 50
     };
 }
 
@@ -86,30 +90,46 @@ MarvelInvaders.prototype.initialise = function (gameCanvas) {
 
     // Salva as dimensoes do jogo
     this.gameDimentions = {
-        left: 0,
+        left: 20,
         top: 0,
-        right: gameCanvas.width - 100,
+        right: gameCanvas.width - 110,
         bottom: gameCanvas.height
     }
 
     // Pega a imagem do personagem da marvel escolhido pelo jogador
+    const playerDiv = document.createElement("div");
     const playerImage = document.getElementById("player-image");
     playerImage.src = localStorage.getItem("playerImage");
 
-    // Pega o nome do personagem da marvel escolhido pelo jogador
     const playerName = document.createElement("h2");
     playerName.textContent = localStorage.getItem("playerName");
+
+    // Cria o x
+    const div = document.createElement("div");
+    div.setAttribute("class", "versus");
+    const versus = document.createElement("h1");
+    versus.textContent = "x";
+
+    // Cria a imagem do invasor
+    const invaderImage = document.getElementById("invader-image");
+    invaderImage.src = localStorage.getItem("invaderImage");
+
+    const invaderName = document.createElement("h2");
+    invaderName.textContent = localStorage.getItem("invaderName");
 
     // Salva as informacoes do jogador e mostra na tela
     details.appendChild(playerImage);
     details.appendChild(playerName);
-    console.log(playerImage);
+    details.appendChild(div);
+    div.appendChild(versus);
+    details.appendChild(invaderName);
+    details.appendChild(invaderImage);
 
     // Cria a nave com a imagem salva no local storage
     this.ship = new Ship(350, 1300, localStorage.getItem("playerImage"));
 
     // Desenha a nave no canvas
-    self.drawShip();
+    self.fillRowsAndColumnsInvaders();
 };
 
 MarvelInvaders.prototype.start = function () {
@@ -118,27 +138,30 @@ MarvelInvaders.prototype.start = function () {
     setInterval(function () {
         self.update();
         self.drawShip();
-        self.drawFire();
+        self.drawInvaders();
         self.updateFire();
+        //self.updateInvaders();
+        self.dropBomb();
+        self.updateBomb();
+        self.drawBomb();
     }, 1000 / this.settings.framesPerSecond);
 }
 
 MarvelInvaders.prototype.update = function () {
     const self = this;
 
-    // Cria movimento para a direita se a seta para direita do teclado for apertada
+    // Cria movimento para a nave
     if (this.keys.right) {
         if (this.ship.x <= (this.gameDimentions.right)) {
             this.ship.x += this.dt * this.settings.shipSpeed;
         }
     }
-    // Cria movimento para a esquerda se a seta para esquerda do teclado for apertada
     if (this.keys.left) {
         if (this.ship.x >= this.gameDimentions.left) {
             this.ship.x -= this.dt * this.settings.shipSpeed;
         }
     }
-    // Atira quando o espaco ou enter do teclado forem apertados
+
     if (this.keys.space) {
         self.shootFire();
     }
@@ -175,7 +198,7 @@ MarvelInvaders.prototype.drawFire = function () {
     // Pega o contexto do canvas do jogo
     const gameContext = this.gameContext;
     // Limpa o canvas
-    gameContext.clearRect(0, 1200, this.gameCanvas.width, this.gameCanvas.height);
+    gameContext.clearRect(0, 0, this.gameCanvas.width, this.gameCanvas.height);
 
     // Desenha os tiros no canvas
     gameContext.fillStyle = "#FBFAF5";
@@ -186,10 +209,93 @@ MarvelInvaders.prototype.drawFire = function () {
 }
 
 MarvelInvaders.prototype.updateFire = function () {
+    this.drawFire();
     // Cria movimento para o tiro, de baixo pra cima
     for (var i=0; i<this.fires.length; i++) {
         const fire = this.fires[i];
         fire.y -= this.dt * fire.speed;
+    }
+}
+
+MarvelInvaders.prototype.fillRowsAndColumnsInvaders = function () {
+    for (var i=0; i<this.settings.invaderRows; i++) {
+        for (var j=0; j<this.settings.invaderColums; j++) {
+            this.invaders.push(new Invader((150+i*120), (j*180), localStorage.getItem("invaderImage")));
+        }
+    }
+}
+
+MarvelInvaders.prototype.drawInvader = function (i) {
+    const gameContext = this.gameContext;
+
+    // Salva a posicao atual da nave
+    var x = this.invaders[i].x;
+    var y = this.invaders[i].y;
+
+    // Desenha a imagem no canvas
+    const img = new Image();
+    img.onload = function () {
+        gameContext.drawImage(img, x, y);
+    };
+    img.src = this.invaders[i].character;
+}
+
+MarvelInvaders.prototype.drawInvaders = function () {
+    for (var i=0; i<this.invaders.length; i++) {
+        this.drawInvader(i);
+    }
+}
+
+MarvelInvaders.prototype.updateInvaders = function () {
+    this.drawInvaders();
+    var goingRight = true, hitBottom = false;
+
+    for (var i=0; i<this.invaders.length; i++) {
+        var invader = this.invaders[i];
+        if (goingRight) {
+            invader.x += this.dt * this.settings.invaderSpeed.x;
+        }
+        else if (!goingRight) {
+            invader.x -= this.dt * this.settings.invaderSpeed.x;
+        }
+
+        if (this.invaders[this.invaders.length - 1].x > this.gameDimentions.right) {
+            goingRight = false;
+        } else {
+            goingRight = true;
+        }
+    }
+}
+
+MarvelInvaders.prototype.dropBomb = function () {
+    if (this.lastBombTime === null || ((new Date()).valueOf() - this.lastBombTime) > (1000 / this.settings.bombFrequency)) {
+        var i = Math.floor(Math.random() * (this.invaders.length - 1) + 1);
+        var invader = this.invaders[i];
+        this.bombs.push(new Bomb((invader.x + 46), invader.y, 8, this.settings.bombSpeed));
+        this.lastBombTime = (new Date().valueOf());
+    }
+}
+
+MarvelInvaders.prototype.drawBomb = function () {
+    // Pega o contexto do canvas do jogo
+    const gameContext = this.gameContext;
+
+    // Desenha as bombas
+    gameContext.fillStyle = "#FBFAF5";
+    for (var i=0; i<this.bombs.length; i++) {
+        const bomb = this.bombs[i];
+        gameContext.beginPath();
+        gameContext.arc(bomb.x, bomb.y, bomb.size, 0, 2*Math.PI);
+        gameContext.fillStyle = 'white';
+        gameContext.fill();
+        gameContext.stroke();
+    }
+}
+
+MarvelInvaders.prototype.updateBomb = function () {
+    for (var i=0; i<this.bombs.length; i++) {
+        const bomb = this.bombs[i];
+        bomb.y += this.dt * bomb.speed;
     }
 }
 
@@ -268,15 +374,11 @@ function Fire(x, y, size, speed) {
  *
  * @param x
  * @param y
- * @param row
- * @param column
  * @param character
  */
-function Invader(x, y, row, column, character) {
+function Invader(x, y, character) {
     this.x = x;
     this.y = y;
-    this.row = row;
-    this.column = column;
     this.character = character;
 }
 
@@ -290,8 +392,9 @@ function Invader(x, y, row, column, character) {
  * @param speed
  * @constructor
  */
-function Bomb(x, y, speed) {
+function Bomb(x, y, size, speed) {
     this.x = x;
     this.y = y;
+    this.size = size,
     this.speed = speed;
 }
