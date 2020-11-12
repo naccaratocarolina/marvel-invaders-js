@@ -124,8 +124,16 @@ button {
 }
 
 /* JOGO */
+#life-container h2 {
+    position: relative;
+    left: 70px;
+    top: 15px;
+    font-size: 2em;
+    color: #EF0000;
+}
+
 #gameContainer {
-    margin-top: 150px;
+    margin-top: 50px;
     overflow: hidden;
     width: 850px;
     height: 1450px;
@@ -133,6 +141,7 @@ button {
     margin-right: auto;
 }
 
+/* CANVAS */
 #gameCanvas {
     width: 100%;
     height: 100%;

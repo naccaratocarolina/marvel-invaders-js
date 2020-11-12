@@ -6,6 +6,7 @@ const KEY_ENTER = 13;
 
 function MarvelInvaders() {
     // Atributos e valores default
+    this.intervalId = 0;
     this.width = 0;
     this.height = 0;
     this.gameDimentions = {
@@ -14,7 +15,7 @@ function MarvelInvaders() {
         right: 0,
         bottom: 0
     }
-    this.lives = 3;
+    this.life = 100;
     this.score = 0;
     this.level = 1;
 
@@ -50,7 +51,7 @@ function MarvelInvaders() {
 
         // Ship
         shipSpeed: 100,
-        pointsPerInvader: 5,
+        damageOnInvader: 5,
 
         // Fire (ship)
         fireSpeed: 120,
@@ -135,19 +136,27 @@ MarvelInvaders.prototype.initialise = function (gameCanvas) {
 MarvelInvaders.prototype.start = function () {
     // Cria movimento
     const self = this;
-    setInterval(function () {
+    this.intervalId = setInterval(function () {
+        self.draw();
         self.update();
-        self.drawShip();
-        self.drawInvaders();
         self.updateFire();
-        //self.updateInvaders();
-        self.dropBomb();
-        self.updateBomb();
         self.drawBomb();
+        self.collision();
     }, 1000 / this.settings.framesPerSecond);
 }
 
+MarvelInvaders.prototype.draw = function () {
+    const self = this;
+    // Desenha a nave
+    self.drawShip();
+
+    // Desenha os invasores
+    self.drawInvaders();
+}
+
 MarvelInvaders.prototype.update = function () {
+    document.getElementById("life").innerHTML = this.life + "%";
+
     const self = this;
 
     // Cria movimento para a nave
@@ -162,8 +171,20 @@ MarvelInvaders.prototype.update = function () {
         }
     }
 
+    // Atira quando a tecla espaco for apertada
     if (this.keys.space) {
         self.shootFire();
+    }
+
+    // Cria movimento para os invasores
+    //self.updateInvaders();
+
+    // Cria movimento para as bombas
+    self.updateBomb();
+
+    // Se a vida do jogador acabar, o jogo para
+    if (this.life <= 0) {
+        self.stop();
     }
 }
 
@@ -218,9 +239,11 @@ MarvelInvaders.prototype.updateFire = function () {
 }
 
 MarvelInvaders.prototype.fillRowsAndColumnsInvaders = function () {
+    // Preenche a quantidade de invasores em funcao das variaveis de classe invaderRows e invaderColumns
     for (var i=0; i<this.settings.invaderRows; i++) {
         for (var j=0; j<this.settings.invaderColums; j++) {
-            this.invaders.push(new Invader((150+i*120), (j*180), localStorage.getItem("invaderImage")));
+            const dx = (this.width - (this.settings.invaderColums*130))/4;
+            this.invaders.push(new Invader((dx+i*130), (j*180), 15, localStorage.getItem("invaderImage")));
         }
     }
 }
@@ -241,6 +264,7 @@ MarvelInvaders.prototype.drawInvader = function (i) {
 }
 
 MarvelInvaders.prototype.drawInvaders = function () {
+    // Desenha os invasores no canvas
     for (var i=0; i<this.invaders.length; i++) {
         this.drawInvader(i);
     }
@@ -254,10 +278,10 @@ MarvelInvaders.prototype.updateInvaders = function () {
         var invader = this.invaders[i];
         if (goingRight) {
             invader.x += this.dt * this.settings.invaderSpeed.x;
-        }
+        }/*
         else if (!goingRight) {
             invader.x -= this.dt * this.settings.invaderSpeed.x;
-        }
+        }*/
 
         if (this.invaders[this.invaders.length - 1].x > this.gameDimentions.right) {
             goingRight = false;
@@ -268,9 +292,12 @@ MarvelInvaders.prototype.updateInvaders = function () {
 }
 
 MarvelInvaders.prototype.dropBomb = function () {
+    // Lanca as bombas aleatoriamente
     if (this.lastBombTime === null || ((new Date()).valueOf() - this.lastBombTime) > (1000 / this.settings.bombFrequency)) {
+        // Aleatoriza o id do invader que esta lancando a bomba
         var i = Math.floor(Math.random() * (this.invaders.length - 1) + 1);
         var invader = this.invaders[i];
+        // Cria a bomba e adiciona no array
         this.bombs.push(new Bomb((invader.x + 46), invader.y, 8, this.settings.bombSpeed));
         this.lastBombTime = (new Date().valueOf());
     }
@@ -293,23 +320,60 @@ MarvelInvaders.prototype.drawBomb = function () {
 }
 
 MarvelInvaders.prototype.updateBomb = function () {
+    this.dropBomb();
+    // Cria movimento para a bomba
     for (var i=0; i<this.bombs.length; i++) {
         const bomb = this.bombs[i];
         bomb.y += this.dt * bomb.speed;
     }
 }
 
+MarvelInvaders.prototype.collision = function () {
+    // Colisao da bomba com a nave
+    for (var i=0; i<this.bombs.length; i++) {
+        var bomb = this.bombs[i];
+        if ( bomb.x >= (this.ship.x - 10) && bomb.x <= ((this.ship.x - 10)+100)
+            && bomb.y >= this.ship.y) {
+            // Atualiza a vida
+            this.life -= 5;
+            // Remove a bomba
+            this.bombs.splice(i, 1);
+        }
+    }
+
+    // Colisao do tiro com os invaders
+    for (var i=0; i<this.fires.length; i++) {
+        var fire = this.fires[i];
+        for (var j=0; j<this.invaders.length; j++) {
+            var invader = this.invaders[j];
+            if (fire.y <= (invader.y + 150) && fire.x >= invader.x && fire.x <= (invader.x + 150)) {
+                // Atualiza a vida do invader
+                invader.life -= 5;
+                // Remove o tiro
+                this.fires.splice(i, 1);
+                // Se a vida do invader acabar
+                if (invader.life <= 0) {
+                    // Remove esse invader
+                    this.invaders.splice(j, 1);
+                }
+            }
+        }
+    }
+}
+
+// Encerra o jogo
+MarvelInvaders.prototype.stop = function () {
+    clearInterval(this.intervalId);
+}
+
 // Evento que escuta do HTML o codigo das teclas que foram apertadas
 MarvelInvaders.prototype.pressedKey = function (keyCode) {
-    // Se a tecla da direita for apertada
     if (keyCode === KEY_RIGHT) {
         this.keys.right = true;
     }
-    // Se a tecla da esquerda for apertada
     else if (keyCode === KEY_LEFT) {
         this.keys.left = true;
     }
-    // Se espaco ou enter forem apertados
     else if (keyCode === KEY_SPACE || keyCode === KEY_ENTER) {
         this.keys.space = true;
     }
@@ -317,15 +381,12 @@ MarvelInvaders.prototype.pressedKey = function (keyCode) {
 
 // Evento que escuta do HTML o codigo das teclas que foram desapertadas
 MarvelInvaders.prototype.unpressedKey = function (keyCode) {
-    // Se a tecla da direita for desapertada
     if (keyCode === KEY_RIGHT) {
         this.keys.right = false;
     }
-    // Se a tecla da esquerda for desapertada
     else if (keyCode === KEY_LEFT) {
         this.keys.left = false;
     }
-    // Se espaco ou enter forem desapertada
     else if (keyCode === KEY_SPACE || keyCode === KEY_ENTER) {
         this.keys.space = false;
     }
@@ -376,9 +437,10 @@ function Fire(x, y, size, speed) {
  * @param y
  * @param character
  */
-function Invader(x, y, character) {
+function Invader(x, y, life, character) {
     this.x = x;
     this.y = y;
+    this.life = life;
     this.character = character;
 }
 
@@ -395,6 +457,5 @@ function Invader(x, y, character) {
 function Bomb(x, y, size, speed) {
     this.x = x;
     this.y = y;
-    this.size = size,
-    this.speed = speed;
+    this.size = size, this.speed = speed;
 }
