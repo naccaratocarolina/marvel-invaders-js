@@ -36,18 +36,21 @@
         // Inicia o jogo e cria o tabuleiro
         game.initialise(canvas);
 
+        // Evento que escuta o teclado ao apertar uma tecla
         window.onkeydown = function (e) {
             var keyCode = e.keyCode;
             e.preventDefault();
             game.pressedKey(keyCode);
         };
 
+        // Evento que escuta o teclado ao soltar uma tecla
         window.onkeyup = function (e) {
             var keyCode = e.keyCode;
             e.preventDefault();
             game.unpressedKey(keyCode);
         }
 
+        // Inicia o jogo
         game.start();
     </script>
 </body>
