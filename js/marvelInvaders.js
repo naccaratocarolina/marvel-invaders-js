@@ -58,11 +58,11 @@ function MarvelInvaders() {
             y: 10
         },
         bombDamage: 5,
-        invaderRows: 5,
+        invaderRows: 1,
         invaderColums: 3,
 
         // Bomb (invaders)
-        bombFrequency: 2, // 0.5
+        bombFrequency: 0.5, // 0.5
         bombSpeed: 50
     };
 }
@@ -170,7 +170,7 @@ MarvelInvaders.prototype.update = function () {
     }
 
     // Cria movimento para os invasores
-    //self.updateInvaders();
+    self.updateInvaders();
 
     // Cria movimento para as bombas
     self.updateBomb();
@@ -178,13 +178,15 @@ MarvelInvaders.prototype.update = function () {
     // Se a vida do jogador acabar
     if (this.life === 0) {
         self.stop();
-        hideCanvas();
+        gameOver();
+        hideMessage();
     }
 
     // Se o jogador eliminar todos os invaders
     if (this.invaders.length === 0) {
         self.stop();
-        hideCanvas();
+        winner();
+        hideMessage();
     }
 }
 
@@ -474,35 +476,29 @@ function Bomb(x, y, size, speed) {
     this.size = size, this.speed = speed;
 }
 
-window.onload = function () {
-    hideCanvas();
-    welcome();
-}
-
-function hideCanvas() {
+function hideMessage() {
     let game = document.getElementById("game");
     let messageGameState = document.getElementById("message-game-state");
 
-    if (game.style.display === "none") {
-        game.style.display = "block";
-        messageGameState.style.display = "none";
+    if (messageGameState.style.display === "none") {
+        messageGameState.style.display = "block";
     } else {
-        game.style.display = "none";
-        messageGameState.style.display = "block"
+        messageGameState.style.display = "none";
     }
-}
-
-function welcome() {
-    document.getElementById("message").innerHTML = "Bem-vindx!";
-    document.getElementById("start-game").innerHTML = "Iniciar"
 }
 
 function gameOver() {
     document.getElementById("message").innerHTML = "Game over!";
-    document.getElementById("start-game").innerHTML = "Reiniciar"
+    document.getElementById("start-game").innerHTML = "Início";
+    document.getElementById("start-game").onclick = function () {
+        location.href = "index.html";
+    }
 }
 
 function winner() {
     document.getElementById("message").innerHTML = "Parabéns!!!";
-    document.getElementById("start-game").innerHTML = "Reiniciar"
+    document.getElementById("start-game").innerHTML = "Início";
+    document.getElementById("start-game").onclick = function () {
+        location.href = "index.html";
+    }
 }

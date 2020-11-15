@@ -25,6 +25,8 @@ button {
 }
 
 #game {
+    position: absolute;
+    z-index: 1;
     width: 100%;
     height: 100%;
 }
@@ -185,12 +187,7 @@ button {
 }
 
 /* MESSAGE GAME STATE */
-#message-game-state {
-    height: 100%;
-    width: 100%;
-}
-
-#message-game-state h1 {
+#message {
     position: absolute;
     top: 35vh;
     margin: 5vh;

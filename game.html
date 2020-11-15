@@ -23,12 +23,12 @@
             <img id="player-image">
             <img id="invader-image">
         </div>
-    </div>
-    <div id="message-game-state">
-        <h1 id="message"></h1>
-        <button id="start-game-button">
-            <h3 id="start-game"></h3>
-        </button>
+        <div id="message-game-state">
+            <h1 id="message">Bem-vindx!</h1>
+            <button id="start-game-button">
+                <h3 id="start-game">Iniciar</h3>
+            </button>
+        </div>
     </div>
     <script src="js/starrysky.js"></script>
     <script src="js/marvelInvaders.js"></script>
@@ -60,7 +60,7 @@
 
         // Inicia o jogo
         let startButtom = document.getElementById("start-game-button").onclick = function () {
-            hideCanvas();
+            hideMessage();
             game.start();
         }
 
