@@ -15,13 +15,18 @@ button {
     margin-top: 2vh;
     font-size: 2em;
     height: 4vh;
-    width: 35vw;
+    width: auto;
     background: #F0A90A;
     box-shadow: 0.2em 0.2em 0 #EF0000;
     border-radius: 3px;
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+#game {
+    width: 100%;
+    height: 100%;
 }
 
 /* SCROLL VERTICAL */
@@ -177,4 +182,27 @@ button {
     width: 10%;
     object-fit:cover;
     border-radius: 50%;
+}
+
+/* MESSAGE GAME STATE */
+#message-game-state {
+    height: 100%;
+    width: 100%;
+}
+
+#message-game-state h1 {
+    position: absolute;
+    top: 35vh;
+    margin: 5vh;
+    width: 100%;
+    color: #EF0000;
+    text-shadow: 0.06em 0.06em 0 #F0A90A;
+    font-size: 8em;
+}
+
+#start-game-button {
+    margin-left: 45vw;
+    margin-right: 45vw;
+    position: absolute;
+    top: 50vh;
 }

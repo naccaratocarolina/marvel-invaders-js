@@ -12,21 +12,29 @@
 </head>
 <body>
     <div id="starry-sky"></div>
-    <div id="life-container">
-        <h2 id="life"></h2>
+    <div id="game">
+        <div id="life-container">
+            <h2 id="life"></h2>
+        </div>
+        <div id="gameContainer">
+            <canvas id="gameCanvas"></canvas>
+        </div>
+        <div id="details">
+            <img id="player-image">
+            <img id="invader-image">
+        </div>
     </div>
-    <div id="gameContainer">
-        <canvas id="gameCanvas"></canvas>
-    </div>
-    <div id="details">
-        <img id="player-image">
-        <img id="invader-image">
+    <div id="message-game-state">
+        <h1 id="message"></h1>
+        <button id="start-game-button">
+            <h3 id="start-game"></h3>
+        </button>
     </div>
     <script src="js/starrysky.js"></script>
     <script src="js/marvelInvaders.js"></script>
     <script>
         // Salva as informacoes do canvas
-        var canvas = document.getElementById("gameCanvas");
+        let canvas = document.getElementById("gameCanvas");
         canvas.width = 850;
         canvas.height = 1450;
 
@@ -51,7 +59,11 @@
         }
 
         // Inicia o jogo
-        game.start();
+        let startButtom = document.getElementById("start-game-button").onclick = function () {
+            hideCanvas();
+            game.start();
+        }
+
     </script>
 </body>
 </html>
