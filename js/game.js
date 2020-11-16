@@ -7,9 +7,10 @@ const KEY_ENTER = 13;
 function Game() {
     // Atributos e valores default
     this.intervalId = 0;
+
+    // Dimensoes do jogo/canvas
     this.width = 0;
     this.height = 0;
-    this.life = 100;
     this.gameDimentions = {
         left: 0,
         top: 0,
@@ -34,7 +35,8 @@ function Game() {
     this.invaders = [];
     this.bombs = [];
 
-    // Game states
+    // Estados do jogo
+    this.life = 100;
     this.lastFireTime = null;
     this.lastBombTime = null;
     this.dt = 0; // delta t para criar movimento para os objetos
@@ -55,14 +57,14 @@ function Game() {
         // Invader
         invaderSpeed: {
             x: 25,
-            y: 7
+            y: 10
         },
         bombDamage: 5,
         invaderRows: 5,
         invaderColums: 3,
 
         // Bomb (invaders)
-        bombFrequency: 0.5, // 0.5
+        bombFrequency: 0.5,
         bombSpeed: 50
     };
 }
@@ -182,7 +184,17 @@ Game.prototype.update = function () {
         hideMessage();
     }
 
-    // Se o jogador eliminar todos os invaders
+    // Se os invasores atingirem a base do canvas, ou se os invasores encostarem no jogador
+    this.invaders.map((invader) => {
+        if ((invader.y + 150) >= this.ship.y && invader.x >= this.ship.x && invader.x <= (this.ship.x + 100)
+            || (invader.y + 150) > this.gameDimentions.bottom) {
+            self.stop();
+            gameOver();
+            hideMessage();
+        }
+    });
+
+    // Se o jogador eliminar todos os invasores
     if (this.invaders.length === 0) {
         self.stop();
         winner();
@@ -289,17 +301,20 @@ Game.prototype.updateInvaders = function () {
             hitBottom = true;
         }
 
+        // Só cria movimento enquanto ele nao tiver atingido a direita, esquerda e base do canvas
         if (!hitLeft && !hitRight && !hitBottom) {
             invader.x = nextX;
             invader.y = nextY;
         }
     });
 
+    // Se ele atingir a direita, inverte a velocidade
     if (hitRight === true) {
         this.settings.invaderSpeed.x *= -1;
         hitRight = false;
     }
 
+    // Se ele atingir a esquerda, inverte a velocidade
     if (hitLeft === true) {
         this.settings.invaderSpeed.x *= -1;
         hitLeft = false;
@@ -307,7 +322,7 @@ Game.prototype.updateInvaders = function () {
 }
 
 Game.prototype.dropBomb = function () {
-    // Lanca as bombas aleatoriamente
+    // Lanca as bombas aleatoriamente numa determinada frequencia
     if (this.invaders.length > 0 && this.lastBombTime === null ||
         ((new Date()).valueOf() - this.lastBombTime) > (1000 / this.settings.bombFrequency)) {
         // Aleatoriza o id do invader que esta lancando a bomba
@@ -323,7 +338,7 @@ Game.prototype.drawBomb = function () {
     // Pega o contexto do canvas do jogo
     const gameContext = this.gameContext;
 
-    // Desenha as bombas
+    // Desenha as bombas (circunferencias)
     gameContext.fillStyle = "#FBFAF5";
     for (let i=0; i<this.bombs.length; i++) {
         const bomb = this.bombs[i];
@@ -337,7 +352,7 @@ Game.prototype.drawBomb = function () {
 
 Game.prototype.updateBomb = function () {
     this.dropBomb();
-    // Cria movimento para a bomba
+    // Cria movimento para as bombas
     for (let i=0; i<this.bombs.length; i++) {
         const bomb = this.bombs[i];
         bomb.y += this.dt * bomb.speed;
@@ -348,7 +363,7 @@ Game.prototype.collision = function () {
     // Colisao da bomba com a nave
     for (let i=0; i<this.bombs.length; i++) {
         let bomb = this.bombs[i];
-        if ( bomb.x >= this.ship.x && bomb.x <= (this.ship.x + 100)
+        if (bomb.x >= this.ship.x && bomb.x <= (this.ship.x + 100)
             && bomb.y >= this.ship.y && bomb.y < this.gameDimentions.bottom) {
             // Atualiza a vida
             this.life -= this.settings.bombDamage;
@@ -412,7 +427,7 @@ Game.prototype.unpressedKey = function (keyCode) {
  * Ship.
  *
  * É a nave do usuario que está jogando.
- * Ela possui uma posicao e a string com a src da imagem do player.
+ * Ela possui uma posicao (x , y) e a string com a src da imagem do player (character).
  *
  * @param x
  * @param y
@@ -429,6 +444,7 @@ function Ship(x, y, character) {
  * Fire.
  *
  * Tiro da nave do jogador.
+ * Essa entidade armazena a posizao (x, y) do tiro, o seu tamanho (size) e velocidade (speed).
  *
  * @param x
  * @param y
@@ -446,8 +462,7 @@ function Fire(x, y, size, speed) {
  * Invader.
  *
  * São as naves inimigas.
- * Ela possui uma posicao, a quantidade de invasores nas linhas
- * e colunas e o id do personagem escolhido.
+ * Ela possui uma posicao (x, y), a vida (life) e a src da imagem do invasor (character).
  *
  * @param x
  * @param y
@@ -464,6 +479,7 @@ function Invader(x, y, life, character) {
  * Bomb.
  *
  * Bombas jogadas pelos invasores.
+ * Essa entidade armazena a posizao (x, y) da bomba, o seu tamanho (size) e velocidade (speed).
  *
  * @param x
  * @param y
@@ -476,6 +492,9 @@ function Bomb(x, y, size, speed) {
     this.size = size, this.speed = speed;
 }
 
+/**
+ * Funcao que ora esconde a mensagem do estado do jogo, ora mostra a mesma.
+ */
 function hideMessage() {
     let game = document.getElementById("game");
     let messageGameState = document.getElementById("message-game-state");
@@ -487,6 +506,9 @@ function hideMessage() {
     }
 }
 
+/**
+ * Funcao que personaliza a mensagem indicando o fim do jogo.
+ */
 function gameOver() {
     document.getElementById("message").innerHTML = "Game over!";
     document.getElementById("start-game").innerHTML = "Início";
@@ -495,6 +517,9 @@ function gameOver() {
     }
 }
 
+/**
+ * Funcao que personaliza a mensagem indicando que o jogador venceu o jogo.
+ */
 function winner() {
     document.getElementById("message").innerHTML = "Parabéns!!!";
     document.getElementById("start-game").innerHTML = "Início";

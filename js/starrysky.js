@@ -95,6 +95,18 @@ Starrysky.prototype.draw = function() {
     }
 };
 
+/**
+ * Star.
+ *
+ * Representam as estrelas.
+ * Essa entidade armazena a posizao (x, y) da estrela, o seu tamanho (size) e velocidade (speed).
+ *
+ * @param x
+ * @param y
+ * @param size
+ * @param speed
+ * @constructor
+ */
 function Star(x, y, size, speed) {
     this.x = x;
     this.y = y;
