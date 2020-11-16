@@ -1,0 +1,112 @@
+/* CONFIGURACOES GERAIS DA PAGINA */
+body, html {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+* {
+    font-family: 'Orbitron', sans-serif;
+}
+
+button {
+    margin-top: 2vh;
+    font-size: 2em;
+    height: 4vh;
+    width: auto;
+    background: #F0A90A;
+    box-shadow: 0.2em 0.2em 0 #EF0000;
+    border-radius: 3px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* CONTAINER PRINCIPAL DA PAGINA */
+#game {
+    position: absolute;
+    margin: 2%;
+    width: 100vw;
+    height: 1700px;
+}
+
+/* JOGO */
+#life-container h2 {
+    position: relative;
+    left: 70px;
+    top: 15px;
+    font-size: 2.5em;
+    color: #EF0000;
+}
+
+#gameContainer {
+    margin-top: 5vh;
+    overflow: hidden;
+    width: 850px;
+    height: 1450px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* CANVAS */
+#gameCanvas {
+    width: 850px;
+    height: 1450px;
+}
+
+/* DETALHES DOS JOGADORES */
+
+#details {
+    position: absolute;
+    top: 97vh;
+    width: 1050px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#details h1 {
+    display: flex;
+    font-size: 4em;
+    width: 20vw;
+    justify-content: center;
+    color: #EF0000;
+    text-shadow: 0.06em 0.06em 0 #F0A90A;
+}
+
+#details h2 {
+    color: #FBFAF5;
+    font-size: 2.7em;
+    width: 30vw;
+    align-items: center;
+}
+
+#details img {
+    position: relative;
+    margin: 0.8em;
+    height: 5.5vh;
+    width: 10%;
+    object-fit:cover;
+    border-radius: 50%;
+}
+
+/* MENSAGEM */
+#message {
+    position: absolute;
+    top: 35vh;
+    margin: 5vh;
+    width: 100%;
+    color: #EF0000;
+    text-shadow: 0.06em 0.06em 0 #F0A90A;
+    font-size: 9em;
+}
+
+#start-game-button {
+    margin-left: 49vw;
+    margin-right: 50vw;
+    position: absolute;
+    top: 50vh;
+}

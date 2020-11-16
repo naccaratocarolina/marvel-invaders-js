@@ -24,29 +24,11 @@ button {
     align-items: center;
 }
 
-#game {
-    position: absolute;
-    z-index: 1;
-    width: 100%;
-    height: 100%;
-}
-
 /* SCROLL VERTICAL */
 
 .scroll {
     overflow:scroll;
     height:60vh;
-}
-
-/* CEU ESTRELADO */
-
-#starry-sky {
-    width:100%;
-    height:100%;
-    z-index: -1;
-    position: absolute;
-    left: 0;
-    top: 0;
 }
 
 /* TITULO */
@@ -128,78 +110,4 @@ button {
 .next-page-buttom {
     display: flex;
     justify-content: center;
-}
-
-/* JOGO */
-#life-container h2 {
-    position: relative;
-    left: 70px;
-    top: 15px;
-    font-size: 2em;
-    color: #EF0000;
-}
-
-#gameContainer {
-    margin-top: 50px;
-    overflow: hidden;
-    width: 850px;
-    height: 1450px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-/* CANVAS */
-#gameCanvas {
-    width: 100%;
-    height: 100%;
-}
-
-#details {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-}
-
-#details h1 {
-    display: flex;
-    font-size: 3.2em;
-    width: 20vw;
-    justify-content: center;
-    color: #EF0000;
-    text-shadow: 0.06em 0.06em 0 #F0A90A;
-}
-
-#details h2 {
-    color: #FBFAF5;
-    font-size: 2em;
-    width: 30vw;
-    align-items: center;
-}
-
-#details img {
-    position: relative;
-    margin: 0.8em;
-    height: 5.5vh;
-    width: 10%;
-    object-fit:cover;
-    border-radius: 50%;
-}
-
-/* MESSAGE GAME STATE */
-#message {
-    position: absolute;
-    top: 35vh;
-    margin: 5vh;
-    width: 100%;
-    color: #EF0000;
-    text-shadow: 0.06em 0.06em 0 #F0A90A;
-    font-size: 8em;
-}
-
-#start-game-button {
-    margin-left: 45vw;
-    margin-right: 45vw;
-    position: absolute;
-    top: 50vh;
 }

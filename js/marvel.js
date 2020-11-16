@@ -87,6 +87,9 @@ function getCharacterImageByName(itemNameOnStorage, characterName) {
         });
 }
 
+/**
+ * Aleatoriza um personagem da api.
+ */
 function getRandomCharacter() {
     const offset = Math.floor(Math.random() * 99 + 1);
     fetch(API_URI + "characters?limit=1&orderBy=name&offset=" + offset + timestamp + API_PUB_KEY + hash)

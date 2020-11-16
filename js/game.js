@@ -4,7 +4,7 @@ const KEY_RIGHT = 39;
 const KEY_SPACE = 32;
 const KEY_ENTER = 13;
 
-function MarvelInvaders() {
+function Game() {
     // Atributos e valores default
     this.intervalId = 0;
     this.width = 0;
@@ -55,10 +55,10 @@ function MarvelInvaders() {
         // Invader
         invaderSpeed: {
             x: 25,
-            y: 10
+            y: 7
         },
         bombDamage: 5,
-        invaderRows: 1,
+        invaderRows: 5,
         invaderColums: 3,
 
         // Bomb (invaders)
@@ -68,7 +68,7 @@ function MarvelInvaders() {
 }
 
 // Funcao principal que inicializa o jogo
-MarvelInvaders.prototype.initialise = function (gameCanvas) {
+Game.prototype.initialise = function (gameCanvas) {
     const self = this;
 
     // Salva o canvas do jogo e o seu contexto
@@ -125,7 +125,7 @@ MarvelInvaders.prototype.initialise = function (gameCanvas) {
     self.fillRowsAndColumnsInvaders();
 };
 
-MarvelInvaders.prototype.start = function () {
+Game.prototype.start = function () {
     // Cria movimento para as entidades do jogo
     const self = this;
     this.intervalId = setInterval(function () {
@@ -137,7 +137,7 @@ MarvelInvaders.prototype.start = function () {
     }, 1000 / this.settings.framesPerSecond);
 }
 
-MarvelInvaders.prototype.draw = function () {
+Game.prototype.draw = function () {
     const self = this;
     // Desenha a nave
     self.drawShip();
@@ -146,7 +146,7 @@ MarvelInvaders.prototype.draw = function () {
     self.drawInvaders();
 }
 
-MarvelInvaders.prototype.update = function () {
+Game.prototype.update = function () {
     const self = this;
 
     // Atualiza a vida do jogador dinamicamente
@@ -190,7 +190,7 @@ MarvelInvaders.prototype.update = function () {
     }
 }
 
-MarvelInvaders.prototype.drawShip = function () {
+Game.prototype.drawShip = function () {
     const gameContext = this.gameContext;
 
     // Salva a posicao atual da nave
@@ -209,7 +209,7 @@ MarvelInvaders.prototype.drawShip = function () {
 }
 
 
-MarvelInvaders.prototype.shootFire = function () {
+Game.prototype.shootFire = function () {
     // Cria um novo fire sempre que essa funcao é chamada numa frequencia de 2 tiros por segundo
     if (this.lastFireTime === null || ((new Date()).valueOf() - this.lastFireTime) > (1000 / this.settings.fireMaxFrequency))  {
         this.fires.push(new Fire((this.ship.x + 46), 1300, 10, this.settings.fireSpeed));
@@ -217,7 +217,7 @@ MarvelInvaders.prototype.shootFire = function () {
     }
 }
 
-MarvelInvaders.prototype.drawFire = function () {
+Game.prototype.drawFire = function () {
     // Pega o contexto do canvas do jogo
     const gameContext = this.gameContext;
     // Limpa o canvas
@@ -231,7 +231,7 @@ MarvelInvaders.prototype.drawFire = function () {
     }
 }
 
-MarvelInvaders.prototype.updateFire = function () {
+Game.prototype.updateFire = function () {
     this.drawFire();
     // Cria movimento para o tiro, de baixo pra cima
     for (let i=0; i<this.fires.length; i++) {
@@ -240,7 +240,7 @@ MarvelInvaders.prototype.updateFire = function () {
     }
 }
 
-MarvelInvaders.prototype.fillRowsAndColumnsInvaders = function () {
+Game.prototype.fillRowsAndColumnsInvaders = function () {
     // Preenche a quantidade de invasores em funcao das variaveis de classe invaderRows e invaderColumns
     for (let i=0; i<this.settings.invaderRows; i++) {
         for (let j=0; j<this.settings.invaderColums; j++) {
@@ -250,7 +250,7 @@ MarvelInvaders.prototype.fillRowsAndColumnsInvaders = function () {
     }
 }
 
-MarvelInvaders.prototype.drawInvader = function (i) {
+Game.prototype.drawInvader = function (i) {
     const gameContext = this.gameContext;
 
     // Salva a posicao atual da nave
@@ -265,14 +265,14 @@ MarvelInvaders.prototype.drawInvader = function (i) {
     img.src = this.invaders[i].character;
 }
 
-MarvelInvaders.prototype.drawInvaders = function () {
+Game.prototype.drawInvaders = function () {
     // Desenha os invasores no canvas
     for (let i=0; i<this.invaders.length; i++) {
         this.drawInvader(i);
     }
 }
 
-MarvelInvaders.prototype.updateInvaders = function () {
+Game.prototype.updateInvaders = function () {
     this.drawInvaders();
     let hitLeft = false, hitRight = false, hitBottom = false;
     this.invaders.map((invader) => {
@@ -306,7 +306,7 @@ MarvelInvaders.prototype.updateInvaders = function () {
     }
 }
 
-MarvelInvaders.prototype.dropBomb = function () {
+Game.prototype.dropBomb = function () {
     // Lanca as bombas aleatoriamente
     if (this.invaders.length > 0 && this.lastBombTime === null ||
         ((new Date()).valueOf() - this.lastBombTime) > (1000 / this.settings.bombFrequency)) {
@@ -319,7 +319,7 @@ MarvelInvaders.prototype.dropBomb = function () {
     }
 }
 
-MarvelInvaders.prototype.drawBomb = function () {
+Game.prototype.drawBomb = function () {
     // Pega o contexto do canvas do jogo
     const gameContext = this.gameContext;
 
@@ -335,7 +335,7 @@ MarvelInvaders.prototype.drawBomb = function () {
     }
 }
 
-MarvelInvaders.prototype.updateBomb = function () {
+Game.prototype.updateBomb = function () {
     this.dropBomb();
     // Cria movimento para a bomba
     for (let i=0; i<this.bombs.length; i++) {
@@ -344,7 +344,7 @@ MarvelInvaders.prototype.updateBomb = function () {
     }
 }
 
-MarvelInvaders.prototype.collision = function () {
+Game.prototype.collision = function () {
     // Colisao da bomba com a nave
     for (let i=0; i<this.bombs.length; i++) {
         let bomb = this.bombs[i];
@@ -378,12 +378,12 @@ MarvelInvaders.prototype.collision = function () {
 }
 
 // Encerra o jogo
-MarvelInvaders.prototype.stop = function () {
+Game.prototype.stop = function () {
     clearInterval(this.intervalId);
 }
 
 // Evento que escuta do HTML o codigo das teclas que foram apertadas
-MarvelInvaders.prototype.pressedKey = function (keyCode) {
+Game.prototype.pressedKey = function (keyCode) {
     if (keyCode === KEY_RIGHT) {
         this.keys.right = true;
     }
@@ -396,7 +396,7 @@ MarvelInvaders.prototype.pressedKey = function (keyCode) {
 }
 
 // Evento que escuta do HTML o codigo das teclas que foram desapertadas
-MarvelInvaders.prototype.unpressedKey = function (keyCode) {
+Game.prototype.unpressedKey = function (keyCode) {
     if (keyCode === KEY_RIGHT) {
         this.keys.right = false;
     }
